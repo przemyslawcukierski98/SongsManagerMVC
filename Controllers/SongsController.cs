@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SongsManagerMVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,17 @@ namespace SongsManagerMVC.Controllers
 {
     public class SongsController : Controller
     {
+        private static IList<SongModel> songs = new List<SongModel>()
+        {
+            new SongModel(){ Id = 1, Album = "SATURATION III", Artist = "BROCKHAMPTON", Description = "Brockhampton album", Length = 40},
+            new SongModel(){ Id = 2, Album = "Arca", Artist = "Arca", Description = "self-titled third studio album by Venezuelan electronic record producer Arca, released on 7 April 2017 through XL Recordings", Length = 45},
+            new SongModel(){ Id = 3, Album = "Arca", Artist = "KICK I", Description = "is the fourth studio album by Venezuelan electronic record producer Arca", Length = 0}
+        };
+
         // GET: SongsController
         public ActionResult Index()
         {
-            return View();
+            return View(songs);
         }
 
         // GET: SongsController/Details/5
@@ -24,22 +32,17 @@ namespace SongsManagerMVC.Controllers
         // GET: SongsController/Create
         public ActionResult Create()
         {
-            return View();
+            return View(new SongModel());
         }
 
         // POST: SongsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(SongModel songModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            songModel.Id = songs.Count + 1;
+            songs.Add(songModel);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: SongsController/Edit/5
