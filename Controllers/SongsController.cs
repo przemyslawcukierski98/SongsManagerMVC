@@ -48,22 +48,24 @@ namespace SongsManagerMVC.Controllers
         // GET: SongsController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return View(songs.FirstOrDefault(x => x.Id == id));
         }
 
         // POST: SongsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, SongModel songModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            SongModel song = songs.FirstOrDefault(x => x.Id == id);
+            song.Title = songModel.Title;
+            song.Album = songModel.Album;
+            song.Length = songModel.Length;
+            song.Artist = songModel.Artist;
+            song.Description = songModel.Description;
+
+
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: SongsController/Delete/5
