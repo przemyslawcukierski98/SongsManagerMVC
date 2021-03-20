@@ -71,22 +71,18 @@ namespace SongsManagerMVC.Controllers
         // GET: SongsController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            return View(songs.FirstOrDefault(x => x.Id == id));
         }
 
         // POST: SongsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, SongModel songModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            SongModel song = songs.FirstOrDefault(x => x.Id == id);
+            songs.Remove(song);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
