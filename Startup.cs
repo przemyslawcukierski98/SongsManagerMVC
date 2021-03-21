@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SongsManagerMVC.Models;
+using SongsManagerMVC.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace SongsManagerMVC
             services.AddControllersWithViews();
             services.AddDbContext<SongsManagerContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SongsManagerDatabase")));
+
+            services.AddTransient<ISongRepository, SongRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

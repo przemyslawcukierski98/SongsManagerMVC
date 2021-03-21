@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SongsManagerMVC.Models;
+using SongsManagerMVC.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,23 +11,23 @@ namespace SongsManagerMVC.Controllers
 {
     public class SongsController : Controller
     {
-        private static IList<SongModel> songs = new List<SongModel>()
+        private readonly ISongRepository _songRepository;
+
+        public SongsController(ISongRepository songRepository)
         {
-            new SongModel(){ Id = 1, Album = "SATURATION III", Artist = "BROCKHAMPTON", Description = "Brockhampton album", Length = 40},
-            new SongModel(){ Id = 2, Album = "Arca", Artist = "Arca", Description = "self-titled third studio album by Venezuelan electronic record producer Arca, released on 7 April 2017 through XL Recordings", Length = 45},
-            new SongModel(){ Id = 3, Album = "Arca", Artist = "KICK I", Description = "is the fourth studio album by Venezuelan electronic record producer Arca", Length = 0}
-        };
+            _songRepository = songRepository;
+        }
 
         // GET: SongsController
         public ActionResult Index()
         {
-            return View(songs);
+            return View(_songRepository.GetAll());
         }
 
         // GET: SongsController/Details/5
         public ActionResult Details(int id)
         {
-            return View(songs.FirstOrDefault(x => x.Id == id));
+            return View(_songRepository.Get(id));
         }
 
         // GET: SongsController/Create
@@ -40,15 +41,15 @@ namespace SongsManagerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(SongModel songModel)
         {
-            songModel.Id = songs.Count + 1;
-            songs.Add(songModel);
+            _songRepository.Add(songModel);
+
             return RedirectToAction(nameof(Index));
         }
 
         // GET: SongsController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View(songs.FirstOrDefault(x => x.Id == id));
+            return View(_songRepository.Get(id));
         }
 
         // POST: SongsController/Edit/5
@@ -56,14 +57,7 @@ namespace SongsManagerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, SongModel songModel)
         {
-            SongModel song = songs.FirstOrDefault(x => x.Id == id);
-            song.Title = songModel.Title;
-            song.Album = songModel.Album;
-            song.Length = songModel.Length;
-            song.Artist = songModel.Artist;
-            song.Description = songModel.Description;
-
-
+            _songRepository.Update(id, songModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -71,7 +65,7 @@ namespace SongsManagerMVC.Controllers
         // GET: SongsController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View(songs.FirstOrDefault(x => x.Id == id));
+            return View(_songRepository.Get(id));
         }
 
         // POST: SongsController/Delete/5
@@ -79,8 +73,7 @@ namespace SongsManagerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, SongModel songModel)
         {
-            SongModel song = songs.FirstOrDefault(x => x.Id == id);
-            songs.Remove(song);
+            _songRepository.Delete(id);
 
             return RedirectToAction(nameof(Index));
         }
